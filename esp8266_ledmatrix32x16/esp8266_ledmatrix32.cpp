@@ -1,6 +1,7 @@
 #include "esp8266_ledmatrix32.h"
 #include "characters.h"
 
+
 // ledMatrix::ledMatrix() {
 // }
 
@@ -101,18 +102,44 @@ void ledMatrix::setPixel(int val, int x, int y, int c) {
 }
 
 int ledMatrix::_calculateTon() {
-    int illum = analogRead(A0);
-    if (illum > 400) {
+    static unsigned int i = 0;
+    static int _illum0 = 0;
+    static int _illum1 = 0;
+    static int _illum2 = 0;
+    static int _illum3 = 0;
+    static int _illum4 = 0;
+
+
+    int illum;
+
+    if (i%20 == 0) {
+        illum = analogRead(A0);
+        // Serial.print("AnaloagRead");
+        // Serial.println(illum);
+        _illum4 = _illum3;
+        _illum3 = _illum2;
+        _illum2 = _illum1;
+        _illum1 = _illum0;
+        _illum0 = illum;
+    }
+
+    int illum_avg = (_illum0 + _illum1 + _illum2 + _illum3 + _illum4)/5;
+    i++;
+    
+    // Serial.println(illum_avg);
+    if (illum_avg > 900) {
         return 500;
     }
-    if (illum < 41) {
+    // if (illum_avg < 5) {
+    //     return 0;
+    // }
+    if (illum_avg < 11) {
         return 1;
     }
-    if (illum < 31) {
-        return 0;
-    }
+
+
     // return (int) (illum-33)*1.25;
-    return (illum - 40)*1.39;
+    return (int) round(illum_avg/1.8-5);
 }
 
 
