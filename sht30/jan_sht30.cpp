@@ -34,8 +34,7 @@ void sht30::singleMeasurement(repeatability rep, clock_stretch  clk_str) {
     }
 
     uint8_t cmd[2] = {MSB, LSB};
-    Serial.print(MSB);
-    Serial.println(LSB);
+
     Wire.beginTransmission(_address);
     Wire.write(cmd, 2);
     if (Wire.endTransmission()!=0) {
